@@ -28,11 +28,13 @@ struct document {
 void print_word(struct word w);
 
 void print_word(struct word w) {
+    //puts("word");
     printf("%s", w.data);
 }
 
 void print_sentence(struct sentence sen) {
     for(int i = 0; i < sen.word_count; i++) {
+        //puts("sentence");
         print_word(sen.data[i]);
         if (i != sen.word_count - 1) {
             printf(" ");
@@ -42,6 +44,7 @@ void print_sentence(struct sentence sen) {
 
 void print_paragraph(struct paragraph para) {
     for(int i = 0; i < para.sentence_count; i++){
+        //puts("paragraph");
         print_sentence(para.data[i]);
         printf(".");
     }
@@ -57,69 +60,63 @@ void print_document(struct document doc) {
 
 struct document get_document(char* text) {
     struct document doc;
-    int par_count = 0, sen_count = 0, wor_count = 0, w_lenght = 0, index = -2;
+    int par_count = 0, sen_count = 0, wor_count = 0, w_lenght = 0, index = 0, i;
 
-    for (int i = 0; text[i] != '\0'; i++) 
-        if (text[i] == '\n') par_count++;   // '(int)text[i] == 92' confere se text[i] = '\' 
+    for (i = 0; text[i] != '\0'; i++) 
+        if (text[i] == '\n') par_count++;
     par_count++;
 
     doc.paragraph_count = par_count;
     doc.data = (struct paragraph*) malloc(sizeof(struct paragraph) * par_count);
     
-    for (int i = 0; i < par_count; i++) {
+    for (i = 0; i < par_count; i++) {
         // inserting in document all its paragraphs
         struct paragraph newParagraph;
-
-        index+= 2;
-
-        for (int j = index; text[j] != '\n'; j++)
+        int j = index;
+        printf("j: %d", j);
+        for (; text[j] != '\n'; j++)
             if (text[j] == '.') sen_count++;
 
         newParagraph.sentence_count = sen_count;
         newParagraph.data = (struct sentence*) malloc(sizeof(struct sentence) * sen_count);
         
-        printf("sen_count: %d\n", sen_count);
 
         for (int j = 0; j < sen_count; j++) { // j count the sentences
             // inserting in paragraph all its sentences
             struct sentence newSen;
             
             for (int k = index; text[k] != '.'; k++)
-                if (text[k] == ' ') {wor_count++; puts("bu");}
+                if (text[k] == ' ') {wor_count++;}
             wor_count++;
 
             newSen.word_count = wor_count;
             newSen.data = (struct word*) malloc(sizeof(struct word) * wor_count);
 
-            printf("word_count: %d\n", wor_count);
             
             for (int k = 0; k < wor_count; k++) { // k count the words
                 // inserting in sentences all its words
                 struct word newWord;
 
-                //index = text[index] == ' ' ? index++ : index;
-                if (text[index] == ' ') {puts("cu rola"); index++;}
                 for (int l = index; text[l] != ' ' && text[l] != '.'; l++)
                     w_lenght++;
                 
                 newWord.data = (char*) malloc(sizeof(char) * w_lenght);
-                printf("word_lenght: %d\n", w_lenght);
-
-                for (int l = index; text[l]  != ' ' && text[l] != '.'; l++) 
-                    newWord.data[l] = text[l];
-
+                
+                for (int l = index, m = 0; text[l]  != ' ' && text[l] != '.'; l++, m++) {
+                    newWord.data[m] = text[l];
+                }
+                printf("a");
                 newSen.data[k] = newWord;
                 index += w_lenght;
                 w_lenght = 0;
-                printf("index: %d\n", index);
+                if (text[index] == '.') {index += 2;}
+                if (text[index] == ' ') { index++;}
             }
             newParagraph.data[j] = newSen;
             wor_count = 0;
         }
-
         doc.data[i] = newParagraph;
         sen_count = 0;
-        printf("new index: %d\n", index);
     }
     return doc;
 }
@@ -159,7 +156,6 @@ int main()
 {
     char* text = get_input_text();
     struct document Doc = get_document(text);
-
     print_document(Doc);
     //int q;
     //scanf("%d", &q);
