@@ -28,13 +28,11 @@ struct document {
 void print_word(struct word w);
 
 void print_word(struct word w) {
-    //puts("word");
     printf("%s", w.data);
 }
 
 void print_sentence(struct sentence sen) {
     for(int i = 0; i < sen.word_count; i++) {
-        //puts("sentence");
         print_word(sen.data[i]);
         if (i != sen.word_count - 1) {
             printf(" ");
@@ -44,7 +42,6 @@ void print_sentence(struct sentence sen) {
 
 void print_paragraph(struct paragraph para) {
     for(int i = 0; i < para.sentence_count; i++){
-        //puts("paragraph");
         print_sentence(para.data[i]);
         printf(".");
     }
@@ -121,15 +118,18 @@ struct document get_document(char* text) {
 }
 
 struct word kth_word_in_mth_sentence_of_nth_paragraph(struct document Doc, int k, int m, int n) {
-    print_word(Doc.data[n].data[m].data[k]);
+    struct word* word_ret = &Doc.data[k - 1].data[m-1].data[n-1];
+    return *word_ret;
 }
 
 struct sentence kth_sentence_in_mth_paragraph(struct document Doc, int k, int m) { 
-    print_sentence(Doc.data[m].data[k]);
+    struct sentence* sentence_ret = &Doc.data[k - 1].data[m-1];
+    return *sentence_ret;
 }
 
 struct paragraph kth_paragraph(struct document Doc, int k) {
-    print_paragraph(Doc.data[k]);
+    struct paragraph* paragraph_ptr = &Doc.data[k - 1];
+    return *paragraph_ptr;
 }
 
 char* get_input_text() {	
@@ -155,11 +155,10 @@ int main()
 {
     char* text = get_input_text();
     struct document Doc = get_document(text);
-    print_document(Doc);
-    //int q;
-    //scanf("%d", &q);
+    int q;
+    scanf("%d", &q); //quantify of operations
 
-    /*while (q--) {
+    while (q--) {
         int type;
         scanf("%d", &type);
 
@@ -173,7 +172,7 @@ int main()
         else if (type == 2) {
             int k, m;
             scanf("%d %d", &k, &m);
-            struct sentence sen= kth_sentence_in_mth_paragraph(Doc, k, m);
+            struct sentence sen = kth_sentence_in_mth_paragraph(Doc, k, m);
             print_sentence(sen);
         }
 
@@ -185,5 +184,5 @@ int main()
         }
         printf("\n");
     }     
-    */
+    
 }
