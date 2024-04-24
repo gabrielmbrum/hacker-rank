@@ -73,8 +73,7 @@ struct document get_document(char* text) {
         // inserting in document all its paragraphs
         struct paragraph newParagraph;
         int j = index;
-        printf("j: %d", j);
-        for (; text[j] != '\n'; j++)
+        for (; text[j] != '\n' && text[j] != '\0'; j++)
             if (text[j] == '.') sen_count++;
 
         newParagraph.sentence_count = sen_count;
@@ -105,7 +104,7 @@ struct document get_document(char* text) {
                 for (int l = index, m = 0; text[l]  != ' ' && text[l] != '.'; l++, m++) {
                     newWord.data[m] = text[l];
                 }
-                printf("a");
+                
                 newSen.data[k] = newWord;
                 index += w_lenght;
                 w_lenght = 0;
