@@ -6,9 +6,8 @@
 
 ###  document.c
 <p>
-this problems uses structs, pointers and arrays.<br>
-it's to convert the input text into the struct document, paragraph, sentence and word.<br>
-check the <a href="https://www.hackerrank.com/challenges/structuring-the-document">problem</a>
-</p>
+- this problems uses structs, pointers and arrays;<br>
+- it's to convert the input text into the struct document, paragraph, sentence and word;<br>
+- <a href="https://www.hackerrank.com/challenges/structuring-the-document">check it out!!</a>
 
 # <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="60" height="60"/>
