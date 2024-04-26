@@ -16,7 +16,7 @@ struct sentence {
 };
 
 struct paragraph {
-    struct sentence* data  ;
+    struct sentence* data;
     int sentence_count;//denotes number of sentences in a paragraph
 };
 
@@ -55,15 +55,21 @@ void print_document(struct document doc) {
     }
 }
 
+int char_count(char *s, char c) {
+    int i, count = 0;
+    for (i = 0; s[i]; i++) {
+        if (s[i] == c) {
+            count++;
+        }
+    }
+    return count;
+}
+
 struct document get_document(char* text) {
     struct document doc;
     int par_count = 0, sen_count = 0, wor_count = 0, w_lenght = 0, index = 0, i;
 
-    for (i = 0; text[i] != '\0'; i++) 
-        if (text[i] == '\n') par_count++;
-    par_count++;
-
-    doc.paragraph_count = par_count;
+    doc.paragraph_count = char_count(text, '\n') + 1;
     doc.data = (struct paragraph*) malloc(sizeof(struct paragraph) * par_count);
     
     for (i = 0; i < par_count; i++) {
@@ -157,26 +163,27 @@ int main()
     struct document Doc = get_document(text);
     int q;
     scanf("%d", &q); //quantify of operations
+    //print_document(Doc);
 
     while (q--) {
         int type;
         scanf("%d", &type);
 
-        if (type == 3){
+        if (type == 3){ //printa x palavra da y sentença e z paragrafo
             int k, m, n;
             scanf("%d %d %d", &k, &m, &n);
             struct word w = kth_word_in_mth_sentence_of_nth_paragraph(Doc, k, m, n);
             print_word(w);
         }
 
-        else if (type == 2) {
+        else if (type == 2) { //printa x sentence do y paragrafo
             int k, m;
             scanf("%d %d", &k, &m);
             struct sentence sen = kth_sentence_in_mth_paragraph(Doc, k, m);
             print_sentence(sen);
         }
 
-        else{
+        else{ // printa x paragrafo
             int k;
             scanf("%d", &k);
             struct paragraph para = kth_paragraph(Doc, k);
