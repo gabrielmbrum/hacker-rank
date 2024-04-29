@@ -55,71 +55,61 @@ void print_document(struct document doc) {
     }
 }
 
-int char_count(char *s, char c) {
-    int i, count = 0;
-    for (i = 0; s[i]; i++) {
-        if (s[i] == c) {
-            count++;
-        }
+// returns: the current line of the stream
+// points stream to next line
+char* getUntil(char** stream, char delim){
+    int i = 0;
+    while((*stream)[i] != delim && (*stream)[i] != '\0') i++;
+    
+    if ((*stream)[i] == '\0'){
+        return *stream;
     }
-    return count;
+    (*stream)[i] = '\0';
+    char* ret = *stream;
+    *stream = &((*stream)[i + 1]);
+    return ret;
+}
+
+// count number of delim characters in string
+int numerate(char* p, char delim){
+    int len = strlen(p);
+    int sum = 0;
+    for (int i = 0; i < len; i++){
+        if (p[i] == delim) sum++;
+    }
+    return sum;
 }
 
 struct document get_document(char* text) {
     struct document doc;
-    int par_count = 0, sen_count = 0, wor_count = 0, w_lenght = 0, index = 0, i;
-
-    doc.paragraph_count = char_count(text, '\n') + 1;
-    doc.data = (struct paragraph*) malloc(sizeof(struct paragraph) * par_count);
+    // initialize doc
+    doc.paragraph_count = numerate(text, '\n') + 1;
+    doc.data = malloc(doc.paragraph_count * sizeof(struct paragraph));
     
-    for (i = 0; i < par_count; i++) {
-        // inserting in document all its paragraphs
-        struct paragraph newParagraph;
-        int j = index;
-        for (; text[j] != '\n' && text[j] != '\0'; j++)
-            if (text[j] == '.') sen_count++;
-
-        newParagraph.sentence_count = sen_count;
-        newParagraph.data = (struct sentence*) malloc(sizeof(struct sentence) * sen_count);
+    char* currPg;
+    char* currS;
+    char* currW;
+    
+    // for each paragraph, count sentences and initialize sentences
+    for (int i = 0; i < doc.paragraph_count; i++){
+        currPg = getUntil(&text, '\n');
+        doc.data[i].sentence_count = numerate(currPg, '.');
+        doc.data[i].data = malloc(doc.data[i].sentence_count * sizeof(struct sentence));
         
-
-        for (int j = 0; j < sen_count; j++) { // j count the sentences
-            // inserting in paragraph all its sentences
-            struct sentence newSen;
+        // for each sentence, count words and initialize words
+        for (int j = 0; j < doc.data[i].sentence_count; j++){
+            currS = getUntil(&currPg, '.');
+            doc.data[i].data[j].word_count = numerate(currS, ' ') + 1; // plus one because last word
+            doc.data[i].data[j].data = malloc(doc.data[i].data[j].word_count * sizeof(struct word));
             
-            for (int k = index; text[k] != '.'; k++)
-                if (text[k] == ' ') {wor_count++;}
-            wor_count++;
-
-            newSen.word_count = wor_count;
-            newSen.data = (struct word*) malloc(sizeof(struct word) * wor_count);
-
-            
-            for (int k = 0; k < wor_count; k++) { // k count the words
-                // inserting in sentences all its words
-                struct word newWord;
-
-                for (int l = index; text[l] != ' ' && text[l] != '.'; l++)
-                    w_lenght++;
-                
-                newWord.data = (char*) malloc(sizeof(char) * w_lenght);
-                
-                for (int l = index, m = 0; text[l]  != ' ' && text[l] != '.'; l++, m++) {
-                    newWord.data[m] = text[l];
-                }
-                
-                newSen.data[k] = newWord;
-                index += w_lenght;
-                w_lenght = 0;
-                if (text[index] == '.') {index += 2;}
-                if (text[index] == ' ') { index++;}
+            // for each word, initialize 
+            for (int k = 0; k < doc.data[i].data[j].word_count; k++) {
+                currW = getUntil(&currS, ' ');
+                doc.data[i].data[j].data[k].data = currW;
             }
-            newParagraph.data[j] = newSen;
-            wor_count = 0;
-        }
-        doc.data[i] = newParagraph;
-        sen_count = 0;
+        }        
     }
+    
     return doc;
 }
 
@@ -163,8 +153,8 @@ int main()
     struct document Doc = get_document(text);
     int q;
     scanf("%d", &q); //quantify of operations
-    //print_document(Doc);
-
+    print_document(Doc);
+    
     while (q--) {
         int type;
         scanf("%d", &type);
@@ -191,5 +181,5 @@ int main()
         }
         printf("\n");
     }     
-    
+      
 }
